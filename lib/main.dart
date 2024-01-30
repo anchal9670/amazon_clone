@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:amazon_clone/common/widgets/bottom_bar.dart';
 import 'package:amazon_clone/constants/global_variables.dart';
 import 'package:amazon_clone/features/auth/screens/auth_screen.dart';
@@ -9,6 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 void main() {
+
+  HttpOverrides.global = new MyHttpOverrides();
   runApp(MultiProvider(
       providers:[
         ChangeNotifierProvider(create: (context) => UserProvider(),
@@ -51,5 +55,15 @@ class _MyAppState extends State<MyApp> {
           ?const BottomBar()
           :const AuthScreen(),
     );
+  }
+}
+
+
+class MyHttpOverrides extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
   }
 }
