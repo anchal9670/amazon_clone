@@ -1,8 +1,12 @@
 import 'package:amazon_clone/constants/global_variables.dart';
 import 'package:amazon_clone/features/account/screens/account_screen.dart';
-import 'package:amazon_clone/home/screens/home_screen.dart';
+import 'package:amazon_clone/features/cart/screens/cart_screen.dart';
+import 'package:amazon_clone/features/home/screens/home_screen.dart';
+import 'package:amazon_clone/providers/user_provider.dart';
+import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
-import 'package:badges/badges.dart' as badges;
+import 'package:provider/provider.dart';
+
 class BottomBar extends StatefulWidget {
   static const String routeName = '/actual-home';
   const BottomBar({Key? key}) : super(key: key);
@@ -12,26 +16,26 @@ class BottomBar extends StatefulWidget {
 }
 
 class _BottomBarState extends State<BottomBar> {
-  int _page=0;
-  double bottomBarWidth=42;
-  double bottomBarBorderWidth=5;
+  int _page = 0;
+  double bottomBarWidth = 42;
+  double bottomBarBorderWidth = 5;
 
-  //route to navigate in bottom navigation bar
-  List<Widget> pages=[
+  List<Widget> pages = [
     const HomeScreen(),
     const AccountScreen(),
-    const Center(child: Text('Cart Page'),),
+    const CartScreen(),
   ];
 
-  //update page number
-  void updatePage(int page)
-  {
+  void updatePage(int page) {
     setState(() {
-      _page=page;
+      _page = page;
     });
   }
+
   @override
   Widget build(BuildContext context) {
+    final userCartLen = context.watch<UserProvider>().user.cart.length;
+
     return Scaffold(
       body: pages[_page],
       bottomNavigationBar: BottomNavigationBar(
@@ -41,7 +45,7 @@ class _BottomBarState extends State<BottomBar> {
         backgroundColor: GlobalVariables.backgroundColor,
         iconSize: 28,
         onTap: updatePage,
-        items:[
+        items: [
           // HOME
           BottomNavigationBarItem(
             icon: Container(
@@ -96,15 +100,7 @@ class _BottomBarState extends State<BottomBar> {
                   ),
                 ),
               ),
-              child: badges.Badge(
-                badgeContent:const Text('2'),
-                badgeStyle: badges.BadgeStyle(
-                  badgeColor: Colors.white,
-                ),
-                child: const Icon(
-                  Icons.shopping_cart_outlined,
-                ),
-              ),
+              child: Text(userCartLen.toString()),
             ),
             label: '',
           ),
